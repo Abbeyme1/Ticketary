@@ -1,5 +1,6 @@
 import express,{Request,Response} from 'express';
 import { body, validationResult } from 'express-validator';
+import { BadRequest } from '../errors/badRequest';
 import { DatabaseConnectionError } from '../errors/databaseConnectionError';
 import { RequestValidationError } from '../errors/requestValidationError';
 import { User } from '../models/user';
@@ -21,15 +22,18 @@ router.post('/api/users/signup',
         //Invalid EMAIL or PASSWORD
         if(!errors.isEmpty()) throw new RequestValidationError(errors.array())
         
-        const {email,password} = req.body;
+        const {name,email,password} = req.body;
 
-        
-        throw new DatabaseConnectionError();
+        const existsUser = await User.findOne({email});
 
-        //alraedy in use
-        res.send({})
-         
-        // any other errors
+        if(existsUser)
+        {
+            throw new BadRequest('Email already exits');
+        }
+
+        const user = User.build({name,email,password});
+        await user.save();
+        res.status(201).send(user)
 
 })
 
