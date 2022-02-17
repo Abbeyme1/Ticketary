@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { Password } from "../helper/hashPassword";
+import { PasswordManager } from "../helper/passwordManager";
 
 // using interface to descrbe what all specific attrs.
 // we need (telling typescript)
@@ -38,13 +38,22 @@ const userSchema = new mongoose.Schema({
         type:String,
         required: true
     }
+},{
+    toJSON: {
+        transform: (doc,ret,options) => {
+            delete ret.__v;
+            delete ret.password;
+            ret.id = ret._id;
+            delete ret._id;
+        }
+    }
 })
 
 userSchema.pre("save",async function(next){
 
     if(this.isModified("password"))
     {
-        this.password = await Password.hashPassword(this.password);
+        this.password = await PasswordManager.hashPassword(this.password);
     }
     next();
 })
