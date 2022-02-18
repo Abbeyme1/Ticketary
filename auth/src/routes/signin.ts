@@ -5,6 +5,7 @@ import { ValidateRequest } from '../middlewares/validateRequest';
 import { User } from '../models/user';
 import { PasswordManager } from '../helper/passwordManager';
 import jwt from 'jsonwebtoken';
+import { currentUser } from '../middlewares/currentUser';
 const router = express.Router();
 
 /*
@@ -17,6 +18,7 @@ router.post('/api/users/signin',
     body('email').isEmail().withMessage('Invalid Email'),
     body('password').trim().notEmpty().withMessage('Password field empty'),
     ValidateRequest,
+    currentUser,
     async (req,res) => {
 
         const {email, password} = req.body;
