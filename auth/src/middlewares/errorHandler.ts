@@ -4,7 +4,9 @@ import { CustomError } from "../errors/customeError";
 export const errorHandler = (err:Error,req:Request,res:Response,next:NextFunction) => {
 
     if((err) instanceof(CustomError))
+    {    
         return res.status(err.statusCode).send({errors: err.serializeErrors()})
+    }
 
     // if((err) instanceof(RequestValidationError))
     //     return res.status(err.statusCode).send({errors: err.serializeErrors()})
@@ -12,7 +14,7 @@ export const errorHandler = (err:Error,req:Request,res:Response,next:NextFunctio
     // else if((err) instanceof DatabaseConnectionError)
     //     return res.status(err.statusCode).send({errors: err.serializeErrors()})
 
-    return res.status(500).send({
+    res.status(500).send({
             errors: [{message: "Something went wrong"}]
     })
 
