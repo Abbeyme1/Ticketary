@@ -13,6 +13,7 @@ ROUTE: /api/users/signup
 DESC: create new account 
 */
 router.post('/api/users/signup',
+    body('name').trim().isLength({min: 1}).withMessage('Invalid Name'),
     body('email').isEmail().withMessage("Invalid Email"),
     body('password').trim().isLength({min:7,max:25}).withMessage("Password must be between 7 and 25 characters"),
     ValidateRequest,
@@ -23,7 +24,7 @@ router.post('/api/users/signup',
 
         if(existsUser)
         {
-            throw new BadRequest('Email already exits');
+            throw new BadRequest('Email already exits','email');
         }
 
         const user = User.build({name,email,password});
