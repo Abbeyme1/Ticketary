@@ -5,8 +5,7 @@ import {currentUserRouter} from './routes/currentuser'
 import {signUpRouter} from './routes/signup'
 import {signInRouter} from './routes/signin'
 import {signOutRouter} from './routes/signout'
-import { errorHandler } from './middlewares/errorHandler';
-import { NotFoundError } from './errors/notFoundError';
+import { errorHandler,NotFoundError } from '@ticketary/sharedlibrary';
 import cookieSession from "cookie-session";
 
 const app = express();
