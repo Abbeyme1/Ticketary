@@ -1,13 +1,12 @@
-import mongoose from "mongoose"; 
-
 import {app} from "./app";
+import mongoose from "mongoose";
+
 
 const connect = async () => {
-  // check if we have secret.. else throw error
-  
+
     if(!process.env.JWT_KEY)
     {
-      throw new Error('"JWT_KEY" is not defined');
+      throw new Error('"JWT_KEY" is not defined')
     }
 
     if(!process.env.MONGO_URL)
@@ -16,7 +15,7 @@ const connect = async () => {
     }
 
     try {
-      // const url = "mongodb://auth-mongo-srv:27017/auth";
+      // const url = "mongodb://tickets-mongo-srv:27017/tickets";
       const conn = await mongoose.connect(process.env.MONGO_URL);
   
       console.log("connected to mongodb");
@@ -30,5 +29,3 @@ const connect = async () => {
 };
 
 connect();
-
-
