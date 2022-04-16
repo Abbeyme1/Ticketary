@@ -1,6 +1,7 @@
 import mongoose from "mongoose"
 import request from "supertest"
 import { app } from "../../app"
+import { connectNATS } from "../../connectNATS"
 
 
 const createTicket = (title:string,price: number,signin: any) => {
@@ -125,4 +126,25 @@ it('status 200 : Successfully Updated',async () => {
 
 
     await check(newTitle,newPrice,ticket.body.id)
+})
+
+
+it('status 200 : publish an event',async () => {
+
+    let title = 'abcd',price=85;
+    let signin = global.signin()
+    const ticket = await createTicket(title,price,signin);
+
+    let newTitle = 'newTitle',newPrice=99;
+    await request(app)
+    .put(`/api/tickets/${ticket.body.id}`)
+    .set("Cookie", signin)
+    .send({
+        title:newTitle,
+        price:newPrice
+    })
+    .expect(200)
+
+
+    expect(connectNATS.client.publish).toHaveBeenCalled()
 })

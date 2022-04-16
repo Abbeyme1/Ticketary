@@ -1,8 +1,7 @@
 import request from 'supertest';
 import { app } from '../../app';
 import {Ticket} from "../../models/ticket"
-
-
+import {connectNATS} from "../../connectNATS"
 
 it('status !400 : listening to /api/tickets',async () => {
     const res = await request(app)
@@ -81,4 +80,22 @@ it('status 200 : successfully created ticket',async () => {
     expect(tickets[0].price).toEqual(50)
 
 
+})
+
+it('status 200 : publish an event',async () => {
+
+    let tickets = await Ticket.find({});
+
+    let title = "BORN TO SHINE",price = 50;
+
+    await request(app)
+        .post('/api/tickets')
+        .set("Cookie",global.signin())
+        .send({
+            title,price
+        })
+        .expect(201)
+
+    
+    expect(connectNATS.client.publish).toHaveBeenCalled();
 })

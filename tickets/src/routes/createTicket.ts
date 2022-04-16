@@ -2,6 +2,8 @@ import {Router,Request,Response} from "express";
 import {Ticket} from "../models/ticket";
 import {body} from "express-validator";
 import { requireAuth,ValidateRequest } from "@ticketary/sharedlibrary";
+import { ticketCratedPublisher } from "../event/publishers/ticketCreatedPubisher";
+import { connectNATS } from "../connectNATS";
 
 const router = Router();
 
@@ -17,6 +19,13 @@ async (req:Request,res:Response) => {
     
     const ticket = Ticket.build({title, price, userId: req.currentUser!.id})
     await ticket.save();
+
+    new ticketCratedPublisher(connectNATS.client).publish({
+        title: ticket.title,
+        price: ticket.price,
+        id: ticket.id,
+        userId: ticket.userId
+    });
 
     res.status(201).send(ticket);
 

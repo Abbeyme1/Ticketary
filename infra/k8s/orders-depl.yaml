@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tickets-depl
+  name: orders-depl
   labels:
-    app: tickets
+    app: orders
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: tickets
+      app: orders
   template:
     metadata:
       labels:
-        app: tickets
+        app: orders
     spec:
       containers:
-        - name: tickets
-          image: abbeyme/tickets
+        - name: orders
+          image: abbeyme/orders
           env:
             - name: JWT_KEY
               valueFrom:
@@ -24,7 +24,7 @@ spec:
                   name: jwt-secret
                   key: JWT_KEY
             - name: MONGO_URL
-              value: "mongodb://tickets-mongo-srv:27017/tickets"
+              value: "mongodb://orders-mongo-srv:27017/orders"
             - name: NATS_CLUSTER_ID
               value: "ticketary"
             - name: NATS_CLIENT_ID
@@ -38,13 +38,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: tickets-srv
+  name: orders-srv
 spec:
   type: ClusterIP
   selector:
-    app: tickets
+    app: orders
   ports:
-    - name: tickets
+    - name: orders
       protocol: TCP
       port: 3000
       targetPort: 3000

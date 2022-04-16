@@ -3,6 +3,8 @@ import {Request,Response,NextFunction,Router} from 'express'
 import { NotFoundError, RequestValidationError, requireAuth, UnauthorizedError, ValidateRequest } from '@ticketary/sharedlibrary'
 import { Ticket } from '../models/ticket'
 import { body ,validationResult} from 'express-validator'
+import { ticketUpdatedPublisher } from '../event/publishers/ticketUpdatedPubisher'
+import { connectNATS } from '../connectNATS'
 
 
 const router = Router()
@@ -29,6 +31,13 @@ async (req:Request,res:Response,next:NextFunction) => {
         })
 
         await ticket.save()
+
+        new ticketUpdatedPublisher(connectNATS.client).publish({
+            title: ticket.title,
+            price: ticket.price,
+            id: ticket.id,
+            userId: ticket.id
+        })
 
         res.send(ticket)
     }
