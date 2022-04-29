@@ -4,6 +4,8 @@ import {BadRequest, NotFoundError, OrderStatus, requireAuth, ValidateRequest} fr
 import {body} from "express-validator";
 import { Order } from "../models/order";
 import { Ticket, ticketDoc } from "../models/ticket";
+import { orderCreatedPublisher } from "../events/publishers/orderCreatedPublisher";
+import { connectNATS } from "../connectNATS";
 
 const router = express.Router();
 const EXPIRY_WINDOW_DUR = 15;
@@ -45,6 +47,21 @@ async (req:Request,res:Response,next:NextFunction) => {
         })
 
         await order.save();
+
+        //emit event of orderCreated
+
+        new orderCreatedPublisher(connectNATS.client).publish({
+            id: order.id,
+            userId: order.userId,
+            status: order.status,
+            version: order.version,
+            expiresAt: order.expiresAt.toISOString(),
+            ticket: {
+                id: ticket.id,
+                price: ticket.price
+            }
+        })
+
 
         res.status(201).send(order)
 

@@ -1,6 +1,8 @@
 import {app} from "./app";
 import mongoose from "mongoose";
 import { connectNATS } from "./connectNATS";
+import { orderCreatedListner } from "./event/listeners/orderCreatedListener";
+import { orderCancelledListener } from "./event/listeners/orderCancelledListener";
 
 const connect = async () => {
 
@@ -40,6 +42,9 @@ const connect = async () => {
       
       process.on('SIGINT',() => connectNATS.client.close()) // sig interrupt
       process.on('SIGTERM',() => connectNATS.client.close()) // sig terminate
+
+      new orderCreatedListner(connectNATS.client).listen()
+      new orderCancelledListener(connectNATS.client).listen()
    
     // const url = "mongodb://tickets-mongo-srv:27017/tickets";
       const conn = await mongoose.connect(process.env.MONGO_URL);

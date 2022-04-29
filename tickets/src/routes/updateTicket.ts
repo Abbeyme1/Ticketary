@@ -1,6 +1,6 @@
 
 import {Request,Response,NextFunction,Router} from 'express'
-import { NotFoundError, RequestValidationError, requireAuth, UnauthorizedError, ValidateRequest } from '@ticketary/sharedlibrary'
+import { BadRequest, NotFoundError, RequestValidationError, requireAuth, UnauthorizedError, ValidateRequest } from '@ticketary/sharedlibrary'
 import { Ticket } from '../models/ticket'
 import { body ,validationResult} from 'express-validator'
 import { ticketUpdatedPublisher } from '../event/publishers/ticketUpdatedPubisher'
@@ -26,6 +26,8 @@ async (req:Request,res:Response,next:NextFunction) => {
 
         if(ticket.userId !== req.currentUser!.id) throw new UnauthorizedError()
 
+        if(ticket.orderId) throw new BadRequest("Cannot edit a reserved ticket");
+
         ticket.set({
             title,price
         })
@@ -36,7 +38,8 @@ async (req:Request,res:Response,next:NextFunction) => {
             title: ticket.title,
             price: ticket.price,
             id: ticket.id,
-            userId: ticket.id
+            userId: ticket.id,
+            version: ticket.version
         })
 
         res.send(ticket)

@@ -12,11 +12,11 @@ class ConnectNATS {
         return this._client;
     }
 
-    async connect(clusterID:string,clientID: string,url:string) {
+     connect(clusterID:string,clientID: string,url:string) {
 
         this._client = nats.connect(clusterID,clientID,{url})
 
-        new Promise<void>((resolve,reject) => {
+        return new Promise<void>((resolve,reject) => {
 
             this.client.on("connect",() => {
                 console.log("CONNECTED TO NATS")
@@ -27,9 +27,6 @@ class ConnectNATS {
                 reject(err);
             })
         })
-        
-
-
     }
 }
 

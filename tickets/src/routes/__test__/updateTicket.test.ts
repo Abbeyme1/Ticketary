@@ -2,6 +2,7 @@ import mongoose from "mongoose"
 import request from "supertest"
 import { app } from "../../app"
 import { connectNATS } from "../../connectNATS"
+import { Ticket } from "../../models/ticket"
 
 
 const createTicket = (title:string,price: number,signin: any) => {
@@ -147,4 +148,28 @@ it('status 200 : publish an event',async () => {
 
 
     expect(connectNATS.client.publish).toHaveBeenCalled()
+})
+
+it('status 400 : failed to update locked ticket',async () => {
+
+    let title = 'abcd',price=85;
+    let signin = global.signin()
+    const ticket = await createTicket(title,price,signin);
+
+    const fetchTicket = await Ticket.findById(ticket.body.id);
+
+    fetchTicket!.set({orderId: new mongoose.Types.ObjectId().toHexString()});
+
+    await fetchTicket!.save();
+
+    let newTitle = 'newTitle',newPrice=99;
+    await request(app)
+    .put(`/api/tickets/${ticket.body.id}`)
+    .set("Cookie", signin)
+    .send({
+        title:newTitle,
+        price:newPrice
+    })
+    .expect(400)
+
 })

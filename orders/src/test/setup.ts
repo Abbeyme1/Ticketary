@@ -16,12 +16,15 @@ const connect = async () => {
 }
 
 const close = async () => {
-    jest.clearAllMocks();
+    
     await mongoose.disconnect();
     await mongoServer.stop();
 }
 
 const clear = async () => {
+
+    jest.clearAllMocks();
+    
     const collections = await mongoose.connection.db.collections();
 
     for(let collection of collections)

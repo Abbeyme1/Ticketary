@@ -2,11 +2,13 @@ import { OrderStatus } from "@ticketary/sharedlibrary"
 import mongoose from "mongoose"
 import request from "supertest"
 import { app } from "../../app"
+import { connectNATS } from "../../connectNATS"
 import { Order } from "../../models/order"
 import { Ticket } from "../../models/ticket"
 
 const createTicket = async () => {
     const ticket = Ticket.build({
+        id: new mongoose.Types.ObjectId().toHexString(),
         title: "abcd",
         price: 50
     })
@@ -84,4 +86,27 @@ it("status 200 : order cancelled", async () => {
 })
 
 
-it.todo("status 200 : emits order cancelled event ")
+it("status 200 : emits order cancelled event",async () => {
+
+    const ticket = await createTicket();
+
+    const user = global.signin();
+    const {body: order} = await request(app)
+    .post("/api/orders")
+    .set("Cookie", user)
+    .send({
+        ticketId: ticket.id
+    })
+    .expect(201);
+
+    await request(app)
+    .delete(`/api/orders/${order.id}`)
+    .set("Cookie",user)
+    .expect(204);
+
+    const cancelledOrder = await Order.findById(order.id);
+
+    expect(cancelledOrder!.status).toEqual(OrderStatus.Cancelled);
+    expect(connectNATS.client.publish).toHaveBeenCalled();
+
+})
