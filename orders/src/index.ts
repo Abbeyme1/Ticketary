@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import { connectNATS } from "./connectNATS";
 import { ticketCreatedListener } from "./events/listeners/ticketCreatedListener";
 import { ticketUpdatedListener } from "./events/listeners/ticketUpdatedListener";
+import { expirationCompleteListener } from "./events/listeners/expirationCompleteListener";
 
 const connect = async () => {
 
@@ -40,6 +41,7 @@ const connect = async () => {
 
     new ticketCreatedListener(connectNATS.client).listen()
     new ticketUpdatedListener(connectNATS.client).listen()
+    new expirationCompleteListener(connectNATS.client).listen()
 
 
 
