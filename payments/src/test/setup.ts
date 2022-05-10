@@ -6,7 +6,7 @@ jest.mock("../connectNATS");
 
 let mongoServer: MongoMemoryServer
 
-
+process.env.STRIPE_KEY = "sk_test_51KxVQuDkrD1Eq5UGt1LVjAmjoQoUA58uWj9PnwFGCHd8efJkTft0iMZ69VlmJdqNJcI2MZX7Xr7KKrtW3x8dSodx00FdhmquOj"
 const connect = async () => {
 
     process.env.JWT_KEY = 'sfd';
@@ -22,7 +22,9 @@ const close = async () => {
 }
 
 const clear = async () => {
+
     jest.clearAllMocks();
+    
     const collections = await mongoose.connection.db.collections();
 
     for(let collection of collections)
@@ -38,13 +40,13 @@ afterAll(async() => await close())
 
 
 declare global {
-    function signin(): string[]
+    function signin(id?:string): string[]
 }
 
 
-global.signin =  () => {
+global.signin =  (id?:string) => {
 
-    const userId = new mongoose.Types.ObjectId().toHexString();
+    const userId = id ? id : new mongoose.Types.ObjectId().toHexString()
     
     const payload = {name: "ddf" ,id: userId, email: "a@da.com"}
 

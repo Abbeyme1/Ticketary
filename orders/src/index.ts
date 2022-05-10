@@ -4,6 +4,7 @@ import { connectNATS } from "./connectNATS";
 import { ticketCreatedListener } from "./events/listeners/ticketCreatedListener";
 import { ticketUpdatedListener } from "./events/listeners/ticketUpdatedListener";
 import { expirationCompleteListener } from "./events/listeners/expirationCompleteListener";
+import { paymentCreatedListener } from "./events/listeners/paymentCreatedListener";
 
 const connect = async () => {
 
@@ -42,6 +43,7 @@ const connect = async () => {
     new ticketCreatedListener(connectNATS.client).listen()
     new ticketUpdatedListener(connectNATS.client).listen()
     new expirationCompleteListener(connectNATS.client).listen()
+    new paymentCreatedListener(connectNATS.client).listen()
 
 
 
