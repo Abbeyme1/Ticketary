@@ -4,6 +4,8 @@ name: Orders Tests CI
 
 on:
   pull_request
+    paths:
+      - 'orders/**'  
 
 jobs:
   build:
