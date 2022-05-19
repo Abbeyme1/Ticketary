@@ -8,7 +8,7 @@ import { orderCreatedPublisher } from "../events/publishers/orderCreatedPublishe
 import { connectNATS } from "../connectNATS";
 
 const router = express.Router();
-const EXPIRY_WINDOW_DUR = 2;
+const EXPIRY_WINDOW_DUR = 1;
 
 router.post("/api/orders",
 requireAuth,
