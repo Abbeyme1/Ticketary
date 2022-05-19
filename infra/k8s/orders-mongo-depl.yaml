@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: orders-mongo
-          image: mongo
+          image: mongo:4.4.6
 
 ---
 apiVersion: v1

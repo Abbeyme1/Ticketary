@@ -4,15 +4,17 @@ import { Navbar, Container, Nav } from "react-bootstrap";
 
 export default ({ currentUser }) => {
   const links = [
+    currentUser && { label: "Create Ticket", url: "/tickets/createTicket" },
+    currentUser && { label: "Orders", url: "/orders" },
     currentUser && { label: "SignOut", url: "/auth/signout" },
     !currentUser && { label: "SignIn", url: "/auth/signin" },
     !currentUser && { label: "SignUp", url: "/auth/signup" },
   ]
     .filter((links) => links)
     .map(({ label, url }) => (
-      <Nav.Link key={label}>
+      <Nav.Link as="li" key={label}>
         <Link key={label} href={url}>
-          {label}
+          <a>{label}</a>
         </Link>
       </Nav.Link>
     ));
