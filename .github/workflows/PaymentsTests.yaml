@@ -1,19 +1,16 @@
-
-
 name: Payments Tests CI
 
 on:
-  pull_request
+  pull_request:
     paths:
-      - 'payments/**'  
+      - "payments/**"
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Run payments tests
         run: cd payments && npm install && npm run test:ci
-

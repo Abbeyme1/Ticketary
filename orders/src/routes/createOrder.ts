@@ -3,12 +3,12 @@ import mongoose from "mongoose";
 import {BadRequest, NotFoundError, OrderStatus, requireAuth, ValidateRequest} from "@ticketary/sharedlibrary"
 import {body} from "express-validator";
 import { Order } from "../models/order";
-import { Ticket, ticketDoc } from "../models/ticket";
+import { Ticket } from "../models/ticket";
 import { orderCreatedPublisher } from "../events/publishers/orderCreatedPublisher";
 import { connectNATS } from "../connectNATS";
 
 const router = express.Router();
-const EXPIRY_WINDOW_DUR = 2;
+const EXPIRY_WINDOW_DUR = 1;
 
 router.post("/api/orders",
 requireAuth,
