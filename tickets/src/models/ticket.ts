@@ -5,7 +5,8 @@ import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
 interface ticketAttr {
     title: string,
     price: number,
-    userId: string
+    userId: string,
+    description: string
 }
 
 interface ticketDoc extends mongoose.Document {
@@ -13,7 +14,8 @@ interface ticketDoc extends mongoose.Document {
     version: number,
     price: number,
     userId: string,
-    orderId?: string
+    orderId?: string,
+    description: string
 }
 
 interface ticketModel extends mongoose.Model<ticketDoc> {
@@ -28,6 +30,10 @@ const ticketSchema = new mongoose.Schema({
     },
     price: {
         type: Number,
+        required: true
+    },
+    description: {
+        type: String,
         required: true
     },
     userId: {

@@ -17,7 +17,8 @@ it('status 401 : throw error when not signedIn (Unauthorized)',async () => {
         .post('/api/tickets')
         .send({
             title: "sdf",
-            price: 50
+            price: 50,
+            description: "sd"
         })
         .expect(401)
 })
@@ -29,7 +30,8 @@ it('status 201 : accessible to signedIn users only',async () => {
         .set("Cookie",global.signin())
         .send({
             title: "BORN TO SHINE",
-            price: 50
+            price: 50,
+            description: "sfd"
         })
         .expect(201)
 })
@@ -40,7 +42,8 @@ it('status 400 : invalid title',async () => {
     .set("Cookie",global.signin())
     .send({
         title: "",
-        price: 45
+        price: 45,
+        description: "sfd"
     })
     .expect(400);
 })
@@ -51,7 +54,20 @@ it('status 400 : invalid price',async () => {
     .set("Cookie",global.signin())
     .send({
         title: "Born to shine concert",
-        price: -8
+        price: -8,
+        description: "sfd"
+    })
+    .expect(400);
+})
+
+it('status 400 : invalid description',async () => {
+    await request(app)
+    .post('/api/tickets')
+    .set("Cookie",global.signin())
+    .send({
+        title: "Born to shine concert",
+        price: -8,
+        description: ""
     })
     .expect(400);
 })
@@ -63,13 +79,13 @@ it('status 200 : successfully created ticket',async () => {
 
     expect(tickets.length).toEqual(0) 
 
-    let title = "BORN TO SHINE",price = 50;
+    let title = "BORN TO SHINE",price = 50,description ="Sgsdg";
 
     await request(app)
         .post('/api/tickets')
         .set("Cookie",global.signin())
         .send({
-            title,price
+            title,price,description
         })
         .expect(201)
 
@@ -77,7 +93,8 @@ it('status 200 : successfully created ticket',async () => {
 
     expect(tickets.length).toEqual(1)
     expect(tickets[0].title).toEqual(title)
-    expect(tickets[0].price).toEqual(50)
+    expect(tickets[0].price).toEqual(price)
+    expect(tickets[0].description).toEqual(description)
 
 
 })
@@ -86,13 +103,13 @@ it('status 200 : publish an event',async () => {
 
     let tickets = await Ticket.find({});
 
-    let title = "BORN TO SHINE",price = 50;
+    let title = "BORN TO SHINE",price = 50,description ="Sgsdg";
 
     await request(app)
         .post('/api/tickets')
         .set("Cookie",global.signin())
         .send({
-            title,price
+            title,price,description
         })
         .expect(201)
 

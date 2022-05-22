@@ -12,12 +12,13 @@ router.post("/api/tickets",
 requireAuth,
 body('title').not().isEmpty().withMessage('Title is required'),
 body('price').isFloat({gt: 0}).withMessage('Price must be greater than 0'),
+body('description').not().isEmpty().withMessage('Description is required'),
 ValidateRequest,
 async (req:Request,res:Response) => {
 
-    const {title,price} = req.body;
+    const {title,price,description} = req.body;
     
-    const ticket = Ticket.build({title, price, userId: req.currentUser!.id})
+    const ticket = Ticket.build({title, price, description,userId: req.currentUser!.id})
     await ticket.save();
 
     new ticketCratedPublisher(connectNATS.client).publish({

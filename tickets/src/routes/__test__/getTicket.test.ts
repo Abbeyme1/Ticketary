@@ -14,13 +14,13 @@ it('status 404 : ticket not found',async () => {
 
 it('status 200 : ticket found', async () => {
 
-    let title = 'rock n roll',price = 82;
+    let title = 'rock n roll',price = 82,description ="Sgsdg";
     //login
     const res = await request(app)
     .post('/api/tickets')
     .set("Cookie", global.signin())
     .send({
-        title,price
+        title,price,description
     })
 
     const {id} = res.body;
@@ -32,5 +32,6 @@ it('status 200 : ticket found', async () => {
     expect(body.id).toEqual(id)
     expect(body.title).toEqual(title)
     expect(body.price).toEqual(price)
+    expect(body.description).toEqual(description)
    
 })

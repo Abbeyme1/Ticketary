@@ -14,10 +14,11 @@ router.put('/api/tickets/:id',
 requireAuth,
 body('title').not().isEmpty().withMessage('Title is required'),
 body('price').isFloat({gt: 0}).withMessage('Price should be greater than 0'),
+body('description').not().isEmpty().withMessage('Description is required'),
 ValidateRequest,
 async (req:Request,res:Response,next:NextFunction) => {
 
-    const {title,price} = req.body;
+    const {title,price,description} = req.body;
     const {id} = req.params;
     try {
 
@@ -29,7 +30,7 @@ async (req:Request,res:Response,next:NextFunction) => {
         if(ticket.orderId) throw new BadRequest("Cannot edit a reserved ticket");
 
         ticket.set({
-            title,price
+            title,price,description
         })
 
         await ticket.save()

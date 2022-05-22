@@ -1,51 +1,59 @@
-import { Table, Nav } from "react-bootstrap";
+import { Row, Col, Card, Image } from "react-bootstrap";
 import Link from "next/link";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPen } from "@fortawesome/free-solid-svg-icons";
 
 const App = ({ currentUser, tickets }) => {
   const display = tickets.map((ticket) => {
     return (
-      <tr key={ticket.id}>
-        <td>{ticket.title}</td>
-        <td>{ticket.price}</td>
-        <td>
-          <Nav.Link as="div">
-            <Link
-              href={"/tickets/edit/[ticketId]"}
-              as={`/tickets/edit/${ticket.id}`}
-            >
-              <a>
-                <FontAwesomeIcon icon={faPen} />
-              </a>
-            </Link>
-          </Nav.Link>
-        </td>
-        <td>
-          <Nav.Link as="div">
-            <Link href={"/tickets/[ticketId]"} as={`/tickets/${ticket.id}`}>
-              <a>View</a>
-            </Link>
-          </Nav.Link>
-        </td>
-      </tr>
+      <Col key={ticket.id} sm={4} className="pb-4">
+        <Card style={{ width: "18rem" }} bg={ticket.orderId ? "light" : "info"}>
+          <Card.Body>
+            <Card.Title>{ticket.title}</Card.Title>
+            <Card.Subtitle className="mb-2 text-muted">
+              ${ticket.price}
+            </Card.Subtitle>
+            <Card.Text>
+              {ticket.description.length > 30
+                ? ticket.description.slice(0, 30) + " ..."
+                : ticket.description}
+            </Card.Text>
+
+            <Card.Link style={{ paddingRight: "10px" }}>
+              <Link
+                href={"/tickets/edit/[ticketId]"}
+                as={`/tickets/edit/${ticket.id}`}
+                disabled={true}
+              >
+                {!currentUser ||
+                ticket.userId !== currentUser.id ||
+                ticket.orderId ? (
+                  <a style={{ pointerEvents: "none" }}>Edit</a>
+                ) : (
+                  <a>Edit</a>
+                )}
+              </Link>
+            </Card.Link>
+
+            <Card.Link disabled={true}>
+              <Link href={"/tickets/[ticketId]"} as={`/tickets/${ticket.id}`}>
+                <a disabled={true}>View</a>
+              </Link>
+            </Card.Link>
+          </Card.Body>
+        </Card>
+      </Col>
     );
   });
 
-  // console.log(tickets);
   return (
-    <Table>
-      <thead>
-        <tr>
-          <th>Title</th>
-          <th>Price</th>
-          <th>Edit</th>
-          <th>View</th>
-        </tr>
-      </thead>
-
-      <tbody>{display}</tbody>
-    </Table>
+    <Row>
+      {tickets.length > 0 ? (
+        display
+      ) : (
+        <Row>
+          <Image src="https://cdn.dribbble.com/users/1135689/screenshots/3957784/media/179c3827aa24a4908b5c20505c9076be.png?compress=1&resize=800x600&vertical=top"></Image>
+        </Row>
+      )}
+    </Row>
   );
 };
 

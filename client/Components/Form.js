@@ -9,11 +9,14 @@ import {
   FormControl,
   FormGroup,
   InputGroup,
+  Spinner,
 } from "react-bootstrap";
 
 import handleRequest from "../hooks/handleRequest";
 import handleError from "../hooks/handleError";
 import Router from "next/router";
+
+import Loader from "./Loader";
 
 export default ({ type }) => {
   const [name, setName] = useState("");
@@ -52,7 +55,7 @@ export default ({ type }) => {
 
   return (
     <>
-      {loading && <h3>loading...</h3>}
+      {loading && <Loader />}
       <Form onSubmit={handleSubmit}>
         {type === "signup" && (
           <FormGroup className="mb-3">

@@ -6,6 +6,7 @@ it('implements optimistic concurrency control', async () => {
 
     const ticket = Ticket.build({
         title: "abcd",
+        description: "sfs",
         price: 457,
         userId: "123"
     })
@@ -39,6 +40,7 @@ it('increments version number on every save', async () => {
 
     const ticket = Ticket.build({
         title: "abcd",
+        description: "df",
         price: 457,
         userId: "123"
     })

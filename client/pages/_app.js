@@ -2,6 +2,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import Header from "../Components/Header";
 import handleClient from "../preBuild/handleClient";
 import { Container } from "react-bootstrap";
+import "./index.css";
 
 const AppComponent = ({ Component, pageProps, currentUser }) => {
   return (

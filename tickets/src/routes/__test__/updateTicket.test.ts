@@ -5,24 +5,26 @@ import { connectNATS } from "../../connectNATS"
 import { Ticket } from "../../models/ticket"
 
 
-const createTicket = (title:string,price: number,signin: any) => {
+const createTicket = (title:string,price: number,description: string,signin: any) => {
     return request(app)
     .post('/api/tickets')
     .set('Cookie',signin)
     .send({
         title,
-        price
+        price,
+        description
     })
     .expect(201)
 }
 
-const check = async (title:string,price: number,id: mongoose.Types.ObjectId) => {
+const check = async (title:string,price: number,description: string,id: mongoose.Types.ObjectId) => {
     const response = await request(app)
     .get(`/api/tickets/${id}`)
     .expect(200)
 
     expect(response.body.title).toEqual(title)
     expect(response.body.price).toEqual(price)
+    expect(response.body.description).toEqual(description)
 }
 
 //if user try to update a ticket without logging in
@@ -34,7 +36,8 @@ it('status 401 : Unauthorized to edit ticket : Not Logged In',async () => {
     .put(`/api/tickets/${id}`)
     .send({
         title: 'pqrs',
-        price: 12
+        price: 12,
+        description: "d"
     }).expect(401)
 })
 
@@ -49,7 +52,8 @@ it('status 404 : ticket doesn\'t exists',async () => {
     .set("Cookie",global.signin())
     .send({
         title: "asdf",
-        price: 78
+        price: 78,
+        description: "d"
     }).expect(404)
 
 })
@@ -59,20 +63,21 @@ it('status 404 : ticket doesn\'t exists',async () => {
 // if user try to update a ticket that isnt his own
 it('status 401 : Unauthorized to edit ticket : Owner Id doesn\'t match',async () => {
 
-    let title = 'abcd',price=85;
-    let signin = global.signin()
-    const ticket = await createTicket(title,price,signin);
+    let title = 'abcd',price=85,description= "d";
+    let signin = global.signin();
+    const ticket = await createTicket(title,price,description,signin);
 
     await request(app)
     .put(`/api/tickets/${ticket.body.id}`)
     .set('Cookie',global.signin())
     .send({
         title: 'asdf',
-        price: 455
+        price: 455,
+        description: "D"
     })
     .expect(401)
 
-    await check(title,price,ticket.body.id)
+    await check(title,price,description,ticket.body.id)
 })
 
 
@@ -80,16 +85,17 @@ it('status 401 : Unauthorized to edit ticket : Owner Id doesn\'t match',async ()
 // if user try to update ticket with wrong attrs
 it('status 400 : Wrong Attributes',async () => {
 
-    let title = 'abcd',price=85;
+    let title = 'abcd',price=85,description= "d";
     let signin = global.signin()
-    const ticket = await createTicket(title,price,signin);
+    const ticket = await createTicket(title,price,description,signin);
 
     await request(app)
     .put(`/api/tickets/${ticket.body.id}`)
     .set("Cookie", signin)
     .send({
         title: '',
-        price: 455
+        price: 455,
+        description: "d"
     })
     .expect(400)
 
@@ -98,51 +104,64 @@ it('status 400 : Wrong Attributes',async () => {
     .set("Cookie", signin)
     .send({
         title: 'ddd',
-        price: -10
+        price: -10,
+        description: "d"
+    })
+    .expect(400)
+
+    await request(app)
+    .put(`/api/tickets/${ticket.body.id}`)
+    .set("Cookie", signin)
+    .send({
+        title: 'ddd',
+        price: 40,
+        description: ""
     })
     .expect(400)
 
 
-    await check(title,price,ticket.body.id)
+    await check(title,price,description,ticket.body.id)
 })
 
 
 // if user try to update ticket with everything right
 it('status 200 : Successfully Updated',async () => {
 
-    let title = 'abcd',price=85;
+    let title = 'abcd',price=85,description= "d";
     let signin = global.signin()
-    const ticket = await createTicket(title,price,signin);
+    const ticket = await createTicket(title,price,description,signin);
 
-    let newTitle = 'newTitle',newPrice=99;
+    let newTitle = 'newTitle',newPrice=99,newDesc="d";
     await request(app)
     .put(`/api/tickets/${ticket.body.id}`)
     .set("Cookie", signin)
     .send({
         title:newTitle,
-        price:newPrice
+        price:newPrice,
+        description: newDesc
     })
     .expect(200)
 
 
 
-    await check(newTitle,newPrice,ticket.body.id)
+    await check(newTitle,newPrice,newDesc,ticket.body.id)
 })
 
 
 it('status 200 : publish an event',async () => {
 
-    let title = 'abcd',price=85;
+    let title = 'abcd',price=85,description= "d";;
     let signin = global.signin()
-    const ticket = await createTicket(title,price,signin);
+    const ticket = await createTicket(title,price,description,signin);
 
-    let newTitle = 'newTitle',newPrice=99;
+    let newTitle = 'newTitle',newPrice=99,newDesc = "SDF";
     await request(app)
     .put(`/api/tickets/${ticket.body.id}`)
     .set("Cookie", signin)
     .send({
         title:newTitle,
-        price:newPrice
+        price:newPrice,
+        description: newDesc
     })
     .expect(200)
 
@@ -152,9 +171,9 @@ it('status 200 : publish an event',async () => {
 
 it('status 400 : failed to update locked ticket',async () => {
 
-    let title = 'abcd',price=85;
+    let title = 'abcd',price=85,description= "d";;
     let signin = global.signin()
-    const ticket = await createTicket(title,price,signin);
+    const ticket = await createTicket(title,price,description,signin);
 
     const fetchTicket = await Ticket.findById(ticket.body.id);
 
@@ -162,13 +181,14 @@ it('status 400 : failed to update locked ticket',async () => {
 
     await fetchTicket!.save();
 
-    let newTitle = 'newTitle',newPrice=99;
+    let newTitle = 'newTitle',newPrice=99,newDesc="SDf";
     await request(app)
     .put(`/api/tickets/${ticket.body.id}`)
     .set("Cookie", signin)
     .send({
         title:newTitle,
-        price:newPrice
+        price:newPrice,
+        description:newDesc
     })
     .expect(400)
 

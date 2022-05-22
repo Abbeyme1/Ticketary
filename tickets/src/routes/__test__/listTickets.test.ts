@@ -7,7 +7,8 @@ const createTicket = () => {
     .set('Cookie',global.signin())
     .send({
         title: "abcd",
-        price: 855
+        price: 855,
+        description: "sd"
     })
     .expect(201)
 }
